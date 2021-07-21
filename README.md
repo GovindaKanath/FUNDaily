@@ -1,0 +1,2 @@
+# FUNDaily
+FUNDaily - Tezos Hackathon
