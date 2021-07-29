@@ -1,9 +1,15 @@
 # FUNDaily
 FUNDaily - Tezos Hackathon
-#Install Project Dependencys
+
+- Install Project Dependencies
+
 npm install
-#Build Project
+
+- Build Project
+
 npm run build:dev
-#Start Server
+
+- Start Server
+
 npm run start:dev
 
