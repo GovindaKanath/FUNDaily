@@ -4,5 +4,45 @@
 		"name": "FUNDaily",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
-	"item": []
+	"item": [
+		{
+			"name": "Upload Image",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/home/sass3r/Imágenes/campingfondo.jpg"
+						},
+						{
+							"key": "title",
+							"value": "camping",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "camping image",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/mint",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mint"
+					]
+				}
+			},
+			"response": []
+		}
+	]
 }
