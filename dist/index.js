@@ -16,9 +16,13 @@ const express_1 = __importDefault(require("express"));
 //import * as express from "express";
 const sdk_1 = __importDefault(require("@pinata/sdk"));
 const fs_1 = __importDefault(require("fs"));
+const taquito_1 = require("@taquito/taquito");
 const PinataKeys = require("./PinataKeys");
+const Fundaily = require("./fund-nft/src/index.js");
 const cors = require("cors");
 const multer = require("multer");
+const ipfsHost = "https://ipfs.io/ipfs/";
+const Tezos = new taquito_1.TezosToolkit("https://testnet-tezos.giganode.io/");
 const app = express_1.default();
 const port = 8080;
 const corsOptions = {
@@ -27,6 +31,26 @@ const corsOptions = {
     ],
     optionSuccessStatus: 200
 };
+/*const getUserNtfs = async (address: string) => {
+    const contract = await Tezos.wallet.at(contractAddress);
+    nftStorage = await contract.storage();
+    const getTokenIds = await nftStorage.reverse_ledger.get(address);
+    if (getTokenIds) {
+        userNfts = await Promise.all([
+            getTokenIds.map(async id => {
+                const tokenId = id.toNumber();
+                const metadata = await nftStorage.token_metadata.get(tokenId);
+                const tokenInfoBytes = metadata.token_info.get("");
+                const tokenInfo = bytes2Char(tokenInfoBytes);
+                return {
+                    tokenId,
+                    ipfsHash:
+                        tokenInfo.slice(0, 7) === "ipfs://" ? tokenInfo.slice(7) : null
+                };
+            })
+        ]);
+    }
+};*/
 const upload = multer({ dest: "uploads/" });
 let pinata = sdk_1.default(PinataKeys.apiKey, PinataKeys.apiSecret);
 app.use(cors(corsOptions));
@@ -84,13 +108,22 @@ app.post("/mint", upload.single("image"), (req, res) => __awaiter(void 0, void 0
                 }
             });
             if (pinnedMetadata.IpfsHash && pinnedMetadata.PinSize > 0) {
-                res.status(200).json({
-                    status: true,
-                    msg: {
-                        imageHash: pinnedFile.IpfsHash,
-                        metadataHash: pinnedMetadata.IpfsHash
-                    }
-                });
+                let ipfsUrl = ipfsHost + pinnedFile.IpfsHash;
+                let owner = req.body.owner;
+                Fundaily.mintNFT(owner, ipfsUrl)
+                    .then(data => {
+                        console.log(data);
+                        res.status(200).json({
+                            status: true,
+                            msg: {
+                                imageHash: pinnedFile.IpfsHash,
+                                metadataHash: pinnedMetadata.IpfsHash
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             }
         }
     }

@@ -2,9 +2,15 @@ import express from "express";
 //import * as express from "express";
 import pinataSDK from "@pinata/sdk";
 import fs from "fs";
+import { TezosToolkit } from "@taquito/taquito";
+import { bytes2Char } from "@taquito/utils";
+
 const PinataKeys = require("./PinataKeys");
+const mintNFT = require("./fund-nft/src/index.js");
 const cors = require("cors");
 const multer = require("multer");
+const ipfsHost = "https://ipfs.io/ipfs/";
+const Tezos =  new TezosToolkit("https://testnet-tezos.giganode.io/");
 
 const app = express();
 const port = 8080;
@@ -14,6 +20,28 @@ const corsOptions = {
     ],
     optionSuccessStatus: 200
 };
+
+/*const getUserNtfs = async (address: string) => {
+    const contract = await Tezos.wallet.at(contractAddress);
+    nftStorage = await contract.storage();
+    const getTokenIds = await nftStorage.reverse_ledger.get(address);
+    if (getTokenIds) {
+        userNfts = await Promise.all([
+            getTokenIds.map(async id => {
+                const tokenId = id.toNumber();
+                const metadata = await nftStorage.token_metadata.get(tokenId);
+                const tokenInfoBytes = metadata.token_info.get("");
+                const tokenInfo = bytes2Char(tokenInfoBytes);
+                return {
+                    tokenId,
+                    ipfsHash:
+                        tokenInfo.slice(0, 7) === "ipfs://" ? tokenInfo.slice(7) : null
+                };
+            })
+        ]);
+    }
+};*/
+
 const upload = multer({ dest: "uploads/" });
 let pinata = pinataSDK(PinataKeys.apiKey, PinataKeys.apiSecret);
 
@@ -81,6 +109,9 @@ app.post("/mint", upload.single("image"), async (req, res) => {
             });
 
             if (pinnedMetadata.IpfsHash && pinnedMetadata.PinSize > 0) {
+                let ipfsUrl = ipfsHost + pinnedFile.IpfsHash;
+                let owner = req.body.owner;
+                mintNFT(owner,ipfsUrl);
                 res.status(200).json({
                     status: true,
                     msg: {
