@@ -4,6 +4,8 @@ FUNDaily - Tezos Hackathon
 - Install Project Dependencies
 
 npm install
+cd dist/fund-nft/
+npm install
 
 - Build Project
 
