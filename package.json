@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "fundaily tezos hackathon",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "start:dev": "nodemon dist/index.js",
     "build:dev": "tsc --watch --preserveWatchOutput",
@@ -20,6 +19,7 @@
   },
   "homepage": "https://github.com/GovindaKanath/FUNDaily#readme",
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.15.4",
     "@pinata/sdk": "^1.1.23",
     "@taquito/taquito": "^10.1.0",
     "cors": "^2.8.5",
